@@ -25,7 +25,7 @@
     "build:code": "NODE_ENV=production polkadot-dev-build-ts",
     "build:i18n": "i18next-scanner --config i18next-scanner.config.js",
     "docs": "echo \"skipping docs\"",
-    "clean": "polkadot-dev-clean-build",
+    "clean": "./scripts/clean-build.sh",
     "clean:i18n": "rm -rf packages/apps/public/locales/en && mkdir -p packages/apps/public/locales/en",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx . && tsc --noEmit --pretty",
     "postinstall": "polkadot-dev-yarn-only",
