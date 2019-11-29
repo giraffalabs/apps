@@ -4,6 +4,7 @@
 
 import { DerivedStakingElected } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/react-components/types';
+import { ValidatorPrefs, ValidatorPrefsTo196 } from '@polkadot/types/interfaces';
 import { ComponentProps } from '../types';
 import { ValidatorInfo } from './types';
 
@@ -17,6 +18,8 @@ import { STORE_FAVS_BASE } from '../constants';
 import translate from '../translate';
 import Summary from './Summary';
 import Validator from './Validator';
+
+const PERBILL = new BN(1000000000);
 
 interface Props extends I18nProps, ComponentProps {
 }
@@ -34,9 +37,9 @@ function sortValidators (list: ValidatorInfo[]): ValidatorInfo[] {
 
       return info;
     })
-    .sort((a, b): number => b.commission.cmp(a.commission))
+    .sort((a, b): number => b.validatorPayment.cmp(a.validatorPayment))
     .map((info, index): ValidatorInfo => {
-      info.rankCommission = index + 1;
+      info.rankPayment = index + 1;
 
       return info;
     })
@@ -46,21 +49,25 @@ function sortValidators (list: ValidatorInfo[]): ValidatorInfo[] {
 
       return info;
     })
-    .sort((a, b): number =>
-      a.rankReward === b.rankReward
-        ? a.rankCommission === b.rankCommission
-          ? a.rankBonded === b.rankBonded
-            ? 0
-            : a.rankBonded < b.rankBonded
+    .sort((a, b): number => {
+      const cmp = b.rewardPayout.cmp(a.rewardPayout);
+
+      return cmp !== 0
+        ? cmp
+        : a.rankReward === b.rankReward
+          ? a.rankPayment === b.rankPayment
+            ? a.rankBonded === b.rankBonded
+              ? 0
+              : a.rankBonded < b.rankBonded
+                ? 1
+                : -1
+            : a.rankPayment < b.rankPayment
               ? 1
               : -1
-          : a.rankCommission < b.rankCommission
+          : a.rankReward < b.rankReward
             ? 1
-            : -1
-        : a.rankReward < b.rankReward
-          ? 1
-          : -1
-    )
+            : -1;
+    })
     .map((info, index): ValidatorInfo => {
       info.rankOverall = index + 1;
 
@@ -101,14 +108,17 @@ function Targets ({ className, sessionRewards, t }: Props): React.ReactElement<P
             own: api.createType('Compact<Balance>'),
             others: api.createType('Vec<IndividualExposure>')
           };
-          const prefs = validatorPrefs || {
-            validatorPayment: api.createType('Compact<Balance>')
+          const prefs = (validatorPrefs as (ValidatorPrefs | ValidatorPrefsTo196)) || {
+            commission: api.createType('Compact<Perbill>')
           };
           const bondOwn = exposure.own.unwrap();
           const bondTotal = exposure.total.unwrap();
-          const commission = prefs.validatorPayment.unwrap();
+          const perValidatorReward = lastReward.divn(numValidators);
+          const validatorPayment = (prefs as ValidatorPrefsTo196).validatorPayment
+            ? (prefs as ValidatorPrefsTo196).validatorPayment.unwrap() as BN
+            : (prefs as ValidatorPrefs).commission.unwrap().mul(perValidatorReward).div(PERBILL);
           const key = accountId.toString();
-          const rewardSplit = lastReward.divn(numValidators).sub(commission);
+          const rewardSplit = perValidatorReward.sub(validatorPayment);
           const calcAmount = amount || new BN(0);
           const rewardPayout = rewardSplit.gtn(0)
             ? calcAmount.mul(rewardSplit).div(calcAmount.add(bondTotal))
@@ -125,17 +135,19 @@ function Targets ({ className, sessionRewards, t }: Props): React.ReactElement<P
             bondOwn,
             bondShare: 0,
             bondTotal,
+            isCommission: !!(prefs as ValidatorPrefs).commission,
             isFavorite: favorites.includes(key),
             isNominating,
             key,
-            commission,
+            commissionPer: (((prefs as ValidatorPrefs).commission?.unwrap() || new BN(0)).muln(10000).div(PERBILL).toNumber() / 100),
             numNominators: exposure.others.length,
             rankBonded: 0,
-            rankCommission: 0,
             rankOverall: 0,
+            rankPayment: 0,
             rankReward: 0,
             rewardPayout,
-            rewardSplit
+            rewardSplit,
+            validatorPayment
           };
         })
       );
@@ -175,7 +187,7 @@ function Targets ({ className, sessionRewards, t }: Props): React.ReactElement<P
                       trigger='ranking-trigger'
                     />
                   </th>
-                  <th className='number'>validator</th>
+                  <th className='number'>&nbsp;</th>
                   <th className='number'>commission</th>
                   <th className='number'>nominators</th>
                   <th className='number'>total stake</th>
