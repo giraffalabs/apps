@@ -25,6 +25,6 @@ jobs:
         GH_PAT: ${{ secrets.GH_PAT }}
       run: |
         yarn install --frozen-lockfile
-        yarn polkadot-dev-ghact-build
-        yarn polkadot-dev-ghact-docs
+        yarn run test-build
+        yarn run deploy-gh-pages
 
