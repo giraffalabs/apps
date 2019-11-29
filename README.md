@@ -4,11 +4,11 @@
 [![beta](https://img.shields.io/npm/v/@polkadot/apps/beta?label=beta&logo=npm&style=flat-square)](https://www.npmjs.com/package/@polkadot/apps)
 [![maintainability](https://img.shields.io/codeclimate/maintainability-percentage/polkadot-js/apps?logo=code-climate&style=flat-square)](https://codeclimate.com/github/polkadot-js/apps)
 
-# @polkadot/apps
+# @giraffa/apps
 
-A Portal into the Polkadot and Substrate networks. Provides a view and interaction layer from a browser.
+Provides a view and interaction layer to a Giffara node from a browser.
 
-This can be accessed as a hosted application via [https://polkadot.js.org/apps/](https://polkadot.js.org/apps/) to explorer any of the supported Polkadot and Substrate chains
+This can be accessed as a hosted application via [https://giraffalabs.github.io/apps](https://giraffalabs.github.io/apps) to explore any of the supported Giraffa chains
 
 ## overview
 
