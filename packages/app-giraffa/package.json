@@ -1,0 +1,16 @@
+{
+  "name": "@giraffa/app-giraffa",
+  "version": "0.38.0-beta.5",
+  "description": "A basic app that shows the ropes on customisation",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Giraffa Labs <hello@giraffa.io>",
+  "maintainers": [
+    "Anakorn Kyavatanakij <anakornk@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@babel/runtime": "^7.7.4",
+    "@polkadot/react-components": "^0.38.0-beta.5"
+  }
+}

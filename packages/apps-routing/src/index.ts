@@ -26,6 +26,7 @@ import sudo from './sudo';
 import toolbox from './toolbox';
 import transfer from './transfer';
 import treasury from './treasury';
+import giraffa from './giraffa';
 
 const routes: Routes = appSettings.uiMode === 'light'
   ? ([] as Routes).concat(
@@ -42,7 +43,8 @@ const routes: Routes = appSettings.uiMode === 'light'
     council,
     // TODO Not sure about the inclusion of treasury & parachains here
     null,
-    settings
+    settings,
+    giraffa
   )
   : ([] as Routes).concat(
     // dashboard,
@@ -67,7 +69,8 @@ const routes: Routes = appSettings.uiMode === 'light'
     settings,
     toolbox,
     js,
-    template
+    template,
+    giraffa
   );
 
 const setup: Routing = {
