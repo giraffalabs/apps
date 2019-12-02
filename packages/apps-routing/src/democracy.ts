@@ -11,7 +11,7 @@ export default ([
     Component: Democracy,
     display: {
       needsApi: [
-        'query.democracy.nextTally'
+        'tx.democracy.notePreimage'
       ]
     },
     i18n: {

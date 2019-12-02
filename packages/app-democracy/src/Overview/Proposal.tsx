@@ -1,82 +1,69 @@
-/* eslint-disable @typescript-eslint/camelcase */
 // Copyright 2017-2019 @polkadot/app-democracy authors & contributors
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { AccountId, Balance, Proposal as ProposalType } from '@polkadot/types/interfaces';
+import { DeriveProposal } from '@polkadot/api-derive/types';
 import { I18nProps } from '@polkadot/react-components/types';
 
-import BN from 'bn.js';
 import React from 'react';
-import { Option, Tuple, Vec } from '@polkadot/types';
-import { ActionItem, InputAddress, Labelled, Static } from '@polkadot/react-components';
-import { withCalls, withMulti } from '@polkadot/react-api';
+import styled from 'styled-components';
+import { AddressMini, AddressSmall } from '@polkadot/react-components';
 import { FormatBalance } from '@polkadot/react-query';
+import { formatNumber } from '@polkadot/util';
 
 import translate from '../translate';
+import ProposalCell from './ProposalCell';
 import Seconding from './Seconding';
 
 interface Props extends I18nProps {
-  democracy_depositOf?: [Balance, Vec<AccountId>] | null;
-  idNumber: BN;
-  value: ProposalType;
+  value: DeriveProposal;
 }
 
-function renderProposal ({ democracy_depositOf, t }: Props): React.ReactNode {
-  if (!democracy_depositOf) {
-    return null;
-  }
-
-  const [balance, addresses] = democracy_depositOf;
-
+function Proposal ({ className, t, value: { balance, index, proposal, proposer, seconds } }: Props): React.ReactElement<Props> {
   return (
-    <div>
-      <Labelled label={t('depositors')}>
-        {addresses.map((address, index): React.ReactNode => (
-          <InputAddress
-            isDisabled
-            key={`${index}:${address}`}
-            defaultValue={address}
-            withLabel={false}
-          />
-        ))}
-      </Labelled>
-      <Static label={t('balance')}>
-        <FormatBalance value={balance} />
-      </Static>
-    </div>
+    <tr className={className}>
+      <td className='number toppad'>{formatNumber(index)}</td>
+      <td className='top'>
+        <AddressSmall value={proposer} />
+      </td>
+      <td className='number together top'>
+        <FormatBalance label={<label>{t('locked')}</label>} value={balance} />
+      </td>
+      <ProposalCell className='top' proposal={proposal} />
+      <td className='top'>
+        {seconds
+          .filter((_address, index): boolean => index !== 0)
+          .map((address, count): React.ReactNode => (
+            <AddressMini
+              className='identityIcon'
+              key={`${count}:${address}`}
+              label={count ? undefined : t('seconds')}
+              value={address}
+              withBalance={false}
+              withShrink
+            />
+          ))}
+      </td>
+      <td className='together number top'>
+        <Seconding
+          depositors={seconds || []}
+          proposalId={index}
+        />
+      </td>
+    </tr>
   );
 }
 
-function Proposal (props: Props): React.ReactElement<Props> {
-  const { className, democracy_depositOf, idNumber, value } = props;
-  const depositors = democracy_depositOf
-    ? democracy_depositOf[1]
-    : [];
+export default translate(
+  styled(Proposal)`
+    .identityIcon {
+      &:first-child {
+        padding-top: 0;
+      }
 
-  return (
-    <ActionItem
-      className={className}
-      idNumber={idNumber}
-      proposal={value}
-    >
-      <Seconding
-        depositors={depositors}
-        proposalId={idNumber}
-      />
-      {renderProposal(props)}
-    </ActionItem>
-  );
-}
-
-export default withMulti(
-  Proposal,
-  translate,
-  withCalls<Props>(
-    ['query.democracy.depositOf', {
-      paramName: 'idNumber',
-      transform: (value: Option<Tuple>): Tuple | null =>
-        value.unwrapOr(null)
-    }]
-  )
+      &:last-child {
+        margin-bottom: 4px;
+      }
+    }
+  `
 );

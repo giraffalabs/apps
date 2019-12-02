@@ -8,6 +8,7 @@ import BN from 'bn.js';
 import React, { useState } from 'react';
 import { Button, Dropdown, InputAddress, Modal, TxButton } from '@polkadot/react-components';
 import { useAccounts } from '@polkadot/react-hooks';
+import { isBoolean } from '@polkadot/util';
 
 import translate from '../translate';
 
@@ -26,6 +27,7 @@ function Voting ({ referendumId, t }: Props): React.ReactElement<Props> | null {
   }
 
   const _toggleVoting = (): void => setIsVotingOpen(!isVotingOpen);
+  const _onChangeVote = (vote?: boolean): void => setVoteValue(isBoolean(vote) ? vote : true);
 
   return (
     <>
@@ -51,7 +53,7 @@ function Voting ({ referendumId, t }: Props): React.ReactElement<Props> | null {
                 { text: t('Aye, I approve'), value: true },
                 { text: t('Nay, I do not approve'), value: false }
               ]}
-              onChange={setVoteValue}
+              onChange={_onChangeVote}
               value={voteValue}
             />
           </Modal.Content>

@@ -11,7 +11,7 @@ import { ValidatorInfo } from './types';
 import BN from 'bn.js';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { InputBalance, Icon, Tooltip } from '@polkadot/react-components';
+import { InputBalance, Table } from '@polkadot/react-components';
 import { useAccounts, useApi, useFavorites, trackStream } from '@polkadot/react-hooks';
 
 import { STORE_FAVS_BASE } from '../constants';
@@ -172,43 +172,17 @@ function Targets ({ className, sessionRewards, t }: Props): React.ReactElement<P
               onChange={setAmount}
               value={amount}
             />
-            <div className='tableContainer'>
-              <table>
-                <thead>
-                  <tr className='header'>
-                    <th>&nbsp;</th>
-                    <th>
-                      <Icon
-                        name='info circle'
-                        data-tip
-                        data-for='ranking-trigger'
-                      />
-                      <Tooltip
-                        text={t('Ranking is done of the estimated best return, taking the commission and total bonded amount into account. It does not incorporate validator liveliness according to length of operation nor number of blocks produced.')}
-                        trigger='ranking-trigger'
-                      />
-                    </th>
-                    <th className='number'>&nbsp;</th>
-                    <th className='number'>commission</th>
-                    <th className='number'>nominators</th>
-                    <th className='number'>total stake</th>
-                    <th className='number'>own stake</th>
-                    <th className='number'>other stake</th>
-                    <th className='number'>payout (est.)</th>
-                    <th>&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {validators.map((info): React.ReactNode =>
-                    <Validator
-                      info={info}
-                      key={info.key}
-                      toggleFavorite={toggleFavorite}
-                    />
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <Table>
+              <Table.Body>
+                {validators.map((info): React.ReactNode =>
+                  <Validator
+                    info={info}
+                    key={info.key}
+                    toggleFavorite={toggleFavorite}
+                  />
+                )}
+              </Table.Body>
+            </Table>
           </>
         )
         : (
@@ -227,69 +201,7 @@ export default translate(
 
     .balanceInput {
       padding-right: 2rem;
-    }
-
-    .tableContainer {
-      padding: 1.5rem 0;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-
-      tr {
-        border: 1px solid #f2f2f2;
-        border-top-width: 0px;
-
-        &:nth-child(even) {
-          background: #f2f2f2;
-        }
-
-        &:nth-child(odd) {
-          background: white;
-        }
-
-        &.isNominating {
-          background: #ffffed;
-        }
-
-        td, th {
-          text-align: right;
-        }
-
-        td {
-          padding: 0.5rem 0.75rem;
-
-          &.number{
-            text-align: right;
-          }
-        }
-
-        th {
-          background: #666;
-          color: #eee;
-          font-family: sans-serif;
-          font-weight: normal;
-          padding: 0.75rem;
-          text-align: right;
-
-          &:first-child {
-            border-top-left-radius: 0.25rem;
-          }
-
-          &:last-child {
-            border-top-right-radius: 0.25rem;
-          }
-        }
-      }
-    }
-
-    i.icon {
-      cursor: pointer;
-    }
-
-    .favorite.isSelected {
-      color: darkorange;
+      margin-bottom: 1.5rem;
     }
   `
 );
