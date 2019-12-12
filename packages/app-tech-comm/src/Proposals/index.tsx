@@ -2,33 +2,55 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Hash } from '@polkadot/types/interfaces';
 import { I18nProps } from '@polkadot/react-components/types';
+import { Hash } from '@polkadot/types/interfaces';
+import { ComponentProps } from '../types';
 
-import React from 'react';
-import { CardGrid } from '@polkadot/react-components';
+import React, { useState } from 'react';
+import { Button, Table } from '@polkadot/react-components';
 
-import Proposal from './Proposal';
 import translate from '../translate';
+import Proposal from './Proposal';
+import Propose from './Propose';
 
-interface Props extends I18nProps {
-  proposals?: Hash[];
-}
+interface Props extends ComponentProps, I18nProps {}
 
-function Proposals ({ proposals, t }: Props): React.ReactElement<Props> {
+function Proposals ({ className, members, proposals, t }: Props): React.ReactElement<Props> {
+  const [isProposeOpen, setIsProposeOpen] = useState(false);
+  const _toggleProposal = (): void => setIsProposeOpen(!isProposeOpen);
+
   return (
-    <CardGrid
-      emptyText={t('No committee proposals')}
-      headerText={t('Proposals')}
-      // buttons={<Propose />}
-    >
-      {proposals?.map((hash: Hash): React.ReactNode => (
-        <Proposal
-          hash={hash.toHex()}
-          key={hash.toHex()}
+    <div className={className}>
+      {isProposeOpen && (
+        <Propose
+          memberCount={members?.length}
+          onClose={_toggleProposal}
         />
-      ))}
-    </CardGrid>
+      )}
+      <Button.Group>
+        <Button
+          isPrimary
+          label={t('Submit proposal')}
+          icon='add'
+          onClick={_toggleProposal}
+        />
+      </Button.Group>
+      {proposals?.length
+        ? (
+          <Table>
+            <Table.Body>
+              {proposals?.map((hash: Hash): React.ReactNode => (
+                <Proposal
+                  hash={hash.toHex()}
+                  key={hash.toHex()}
+                />
+              ))}
+            </Table.Body>
+          </Table>
+        )
+        : t('No committee proposals')
+      }
+    </div>
   );
 }
 

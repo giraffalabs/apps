@@ -3,7 +3,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { DeriveAccountInfo, DerivedStaking } from '@polkadot/api-derive/types';
+import { DeriveAccountInfo, DerivedStakingAccount } from '@polkadot/api-derive/types';
 import { ApiProps } from '@polkadot/react-api/types';
 import { I18nProps } from '@polkadot/react-components/types';
 import { AccountId, AccountIndex, Address } from '@polkadot/types/interfaces';
@@ -32,17 +32,19 @@ export interface Props extends I18nProps, RowProps {
   accounts_info?: DeriveAccountInfo;
   noDefaultNameOpacity?: boolean;
   overlay?: React.ReactNode;
-  stakingInfo?: DerivedStaking;
+  stakingInfo?: DerivedStakingAccount;
   value: AccountId | AccountIndex | Address | string | null;
   withAddressOrName?: boolean;
   withBalance?: boolean | BalanceActiveType;
   withIndex?: boolean;
   withIndexOrAddress?: boolean;
+  withSmallIcon?: boolean;
   withValidatorPrefs?: boolean | ValidatorPrefsType;
 }
 
 const DEFAULT_ADDR = '5'.padEnd(16, 'x');
 const ICON_SIZE = 48;
+const ICON_SIZE_SMALL = 32;
 
 class AddressRow extends Row<ApiProps & Props, State> {
   public state: State;
@@ -164,10 +166,10 @@ class AddressRow extends Row<ApiProps & Props, State> {
   }
 
   private renderAccountIndex (): React.ReactNode {
-    const { accounts_info = {}, withIndex = true, withIndexOrAddress = true } = this.props;
+    const { accounts_info = {}, withIndex = true, withIndexOrAddress = true, withSmallIcon } = this.props;
     const { accountIndex } = accounts_info;
 
-    if (!accountIndex || !(withIndex || withIndexOrAddress)) {
+    if (withSmallIcon || !accountIndex || !(withIndex || withIndexOrAddress)) {
       return null;
     }
 
@@ -200,7 +202,7 @@ class AddressRow extends Row<ApiProps & Props, State> {
   }
 
   private renderIcon (): React.ReactNode {
-    const { accounts_info = {}, iconInfo, systemName, withIcon = true } = this.props;
+    const { accounts_info = {}, iconInfo, systemName, withIcon = true, withSmallIcon = false } = this.props;
     const { address } = this.state;
     const { accountId } = accounts_info;
 
@@ -218,7 +220,7 @@ class AddressRow extends Row<ApiProps & Props, State> {
     return (
       <div className='ui--Row-icon'>
         <Component
-          size={ICON_SIZE}
+          size={withSmallIcon ? ICON_SIZE_SMALL : ICON_SIZE}
           theme={theme}
           value={address}
         />

@@ -19,30 +19,40 @@ interface Props extends I18nProps {
   value: DeriveProposal;
 }
 
-function Proposal ({ className, t, value: { balance, index, proposal, proposer, seconds } }: Props): React.ReactElement<Props> {
+function Proposal ({ className, t, value: { balance, hash, index, proposal, proposer, seconds } }: Props): React.ReactElement<Props> {
+  const seconding = seconds.filter((_address, index): boolean => index !== 0);
+
   return (
     <tr className={className}>
-      <td className='number toppad'>{formatNumber(index)}</td>
+      <td className='number top'><h1>{formatNumber(index)}</h1></td>
       <td className='top'>
         <AddressSmall value={proposer} />
       </td>
       <td className='number together top'>
         <FormatBalance label={<label>{t('locked')}</label>} value={balance} />
       </td>
-      <ProposalCell className='top' proposal={proposal} />
-      <td className='top'>
-        {seconds
-          .filter((_address, index): boolean => index !== 0)
-          .map((address, count): React.ReactNode => (
-            <AddressMini
-              className='identityIcon'
-              key={`${count}:${address}`}
-              label={count ? undefined : t('seconds')}
-              value={address}
-              withBalance={false}
-              withShrink
-            />
-          ))}
+      <ProposalCell
+        className='top'
+        proposalHash={hash}
+        proposal={proposal}
+      />
+      <td className='top seconding'>
+        {seconding.length !== 0 && (
+          <details>
+            <summary>
+              {t('Seconds ({{count}})', { replace: { count: seconds.length } })}
+            </summary>
+            {seconding.map((address, count): React.ReactNode => (
+              <AddressMini
+                className='identityIcon'
+                key={`${count}:${address}`}
+                value={address}
+                withBalance={false}
+                withShrink
+              />
+            ))}
+          </details>
+        )}
       </td>
       <td className='together number top'>
         <Seconding
@@ -64,6 +74,10 @@ export default translate(
       &:last-child {
         margin-bottom: 4px;
       }
+    }
+
+    .seconding {
+      padding-top: 1.1rem;
     }
   `
 );

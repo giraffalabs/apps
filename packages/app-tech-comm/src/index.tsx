@@ -7,19 +7,21 @@ import { AppProps, BareProps, I18nProps } from '@polkadot/react-components/types
 
 import React from 'react';
 import { Route, Switch } from 'react-router';
-import { useApi, trackStream } from '@polkadot/react-hooks';
+import { useApi, useCall } from '@polkadot/react-hooks';
 import { Tabs } from '@polkadot/react-components';
 
 import Overview from './Overview';
 import Proposals from './Proposals';
 import translate from './translate';
 
+export { default as useCounter } from './useCounter';
+
 interface Props extends AppProps, BareProps, I18nProps {}
 
 function App ({ basePath, className, t }: Props): React.ReactElement<Props> {
   const { api } = useApi();
-  const members = trackStream<AccountId[]>(api.query.technicalCommittee.members, []);
-  const proposals = trackStream<Hash[]>(api.query.technicalCommittee.proposals, []);
+  const members = useCall<AccountId[]>(api.query.technicalCommittee.members, []);
+  const proposals = useCall<Hash[]>(api.query.technicalCommittee.proposals, []);
 
   return (
     <main className={className}>
@@ -41,7 +43,10 @@ function App ({ basePath, className, t }: Props): React.ReactElement<Props> {
       </header>
       <Switch>
         <Route path={`${basePath}/proposals`}>
-          <Proposals proposals={proposals} />
+          <Proposals
+            members={members}
+            proposals={proposals}
+          />
         </Route>
         <Route path={basePath}>
           <Overview

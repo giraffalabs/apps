@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache-2.0 license. See the LICENSE file for details.
 
-import { Params } from './types';
+import { CallParams } from './types';
 
 import { isNull, isUndefined } from '@polkadot/util';
 
@@ -15,9 +15,9 @@ export function transformIdentity (value: any): any {
 }
 
 // extract the serialized and mapped params, all ready for use in our call
-export function extractParams (params: any[], paramMap: (params: any[]) => any): [string, Params | null] {
+export function extractParams (fn: any, params: any[], paramMap: (params: any[]) => any): [string, CallParams | null] {
   return [
-    JSON.stringify({ a: params }),
+    JSON.stringify({ f: fn?.name, p: params }),
     params.length === 0 || !params.some((param): boolean => isNull(param) || isUndefined(null))
       ? paramMap(params)
       : null

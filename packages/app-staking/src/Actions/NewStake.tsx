@@ -58,13 +58,10 @@ class NewStake extends TxComponent<Props, State> {
     return (
       <Modal
         className='staking--Bonding'
-        dimmer='inverted'
+        header={t('Bonding Preferences')}
         open
         size='small'
       >
-        <Modal.Header>
-          {t('Bonding Preferences')}
-        </Modal.Header>
         <Modal.Content className='ui--signer-Signer-Content'>
           <InputAddress
             className='medium'

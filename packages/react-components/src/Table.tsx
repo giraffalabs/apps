@@ -57,7 +57,6 @@ export default styled(Table)`
   margin-bottom: 1.5rem;
 
   table {
-    /* border-collapse: collapse; */
     border-collapse: separate;
     border-spacing: 0 0.25rem;
     width: 100%;
@@ -72,7 +71,7 @@ export default styled(Table)`
       }
 
       label {
-        opacity: 0.25;
+        opacity: 0.42;
       }
 
       &:hover {
@@ -80,9 +79,25 @@ export default styled(Table)`
           opacity: 1;
         }
 
-        /* td {
+        td {
           border-color: #ccc;
-        } */
+        }
+      }
+
+      &:not(:hover) {
+        .ui.button:not(.disabled) {
+          background: #eee !important;
+          color: #555 !important;
+        }
+
+        .ui.toggle.checkbox input:checked~.box:before,
+        .ui.toggle.checkbox input:checked~label:before {
+          background-color: #eee !important;
+        }
+
+        .ui.button.mini {
+          visibility: hidden;
+        }
       }
 
       td, th {
@@ -90,6 +105,10 @@ export default styled(Table)`
 
         &.all {
           width: 100%;
+
+          summary {
+            white-space: normal;
+          }
         }
 
         &.number {
@@ -128,6 +147,10 @@ export default styled(Table)`
 
         i.icon {
           cursor: pointer;
+        }
+
+        &.mini {
+          padding: 0 0.75rem 0 0;
         }
 
         &:first-child {
